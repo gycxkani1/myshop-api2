@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>商品-新增</title>
+  <link rel="stylesheet" href="{% static  '/dist/css/adminlte.min.css'%}">
+    <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'plugins/jquery-ui/jquery-ui.min.js' %}"></script>
+</head>
+<body>
+<div class="wrapper">
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-12">
+            <ol class="breadcrumb float-sm-left">
+              <li class="breadcrumb-item"><a href="#">商品</a></li>
+              <li class="breadcrumb-item active">商品增加</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="content">
+      <div class="row">
+        <div class="col-md-12">
+          <form
+          novalidate
+          enctype="multipart/form-data"
+          action=""
+          method="post"
+          class="form-horizontal"
+        >
+          {% csrf_token %}
+          <div class="card card-primary">
+            <div class="card-header">
+              <h3 class="card-title">商品添加</h3>
+            </div>
+            <div class="card-body">
+              <div class="form-group">
+                <label for="{{form_obj.name.id_for_label}}"
+                  >{{form_obj.name.label}}</label
+                >
+                {{form_obj.name}}
+              </div>
+              <div class="form-group">
+                <label for="{{form_obj.category.id_for_label}}"
+                  >{{form_obj.category.label}}</label
+                >
+                {{form_obj.category}}
+              </div>
+              <!--
+              <div class="form-group">
+                <label for="parent_id">商品分类</label>
+                <select id="parent_id" class="form-control custom-select">
+                  <option selected disabled>请选择...</option>
+                  {% for key,value in cates.items %}
+                      <option value={{key}}>{{ value|safe}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              -->
+              <div class="form-group">
+                <label for="{{form_obj.market_price.id_for_label}}"
+                  >{{form_obj.market_price.label}}</label
+                >
+                {{form_obj.market_price}}
+              </div>
+              <div class="form-group">
+                <label for="{{form_obj.price.id_for_label}}"
+                  >{{form_obj.price.label}}</label
+                >
+                {{form_obj.price}}
+              </div>
+              <div class="form-group">
+                <label for="{{form_obj.main_img.id_for_label}}"
+                  >{{form_obj.main_img.label}}</label
+                >
+                <div class="custom-file">
+                  {{form_obj.main_img}}
+                  <label class="custom-file-label" for="customFile"
+                    >选择图片
+                  </label>
+                </div>
+              </div>
+                <div class="form-group">
+                  <label for="{{form_obj.goods_desc.id_for_label}}"
+                    >{{form_obj.goods_desc.label}}</label
+                  >
+                  {{form_obj.goods_desc}}
+                </div>
+              </div>
+              <div class="card-footer">
+                <a href="#" class="btn btn-secondary">取消</a>
+                <button type="submit" class="btn btn-primary">
+                  Submit
+                </button>
+                <span style="color:red;">{{ info }}</span>
+              </div>
+            </div>
+          </div>
+        </form>
+        </div>
+      </div>
+    </section>
+</div>
+<script src="{% static 'plugins/bootstrapValidator/bootstrapValidator.min.js'%}"></script>
+<script src="{% static 'plugins/ckeditor/ckeditor-init.js'%}"></script>
+<script src="{% static 'plugins/ckeditor/ckeditor/ckeditor.js'%}"></script>
+<script>
+  CKEDITOR.replace('content',{width:'100%',height:'400px',
+              filebrowserBrowserUrl:'/ckeditor/browser/', // 文件浏览路径
+              filebrowserUploadUrl:'/ckeditor/upload/'}); // 文件上传路径
+
+</script>
+</body>
+</html>
