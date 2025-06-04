@@ -1,8 +1,8 @@
 import re
-
 from django.http import JsonResponse
 from rest_framework import serializers
 from .models import *
+
 
 #用户详情页序列化类
 class MyUserSerializer(serializers.ModelSerializer):
@@ -38,25 +38,33 @@ class MyUserRegSerializer(serializers.ModelSerializer):
         model=MyUser
         fields=("username","password","mobile")
 
+    # 重写create方法，保存密码时进行加密处理
     def create(self, validated_data):
-         user = super().create(validated_data=validated_data)
+         user = super().create(validated_data=validated_data) 
          user.set_password(validated_data["password"])
          user.save()
          return user
 
+    # 重写validate_username方法，判断用户名是否注册
     def validate_username(self,username):
         #判断用户名是否注册
         if MyUser.objects.filter(username=username).count():
             raise serializers.ValidationError("用户名已经存在，请查询")
             #return JsonResponse({'errors': serializers.errors}, status=500)
+        # 用户名正则表达式
+        REGEX_USERNAME = "^[a-zA-Z][-_a-zA-Z0-9]{5,19}$"
+        # 验证用户名是否合法
+        if not re.match(REGEX_USERNAME, username):
+            raise serializers.ValidationError("用户名应在6~20个字符之间，以英文字母开头且不能有特殊字符")
         return username
 
+    # 重写validate_mobile方法，判断手机号码是否注册
     def validate_mobile(self,mobile):
         #判断手机号码是否注册
         if MyUser.objects.filter(mobile=mobile).count():
             raise serializers.ValidationError("手机号码已经存在，请查询")
         # 手机号码正则表达式
-        REGEX_MOBILE = "^1[358]\d{9}$|^147\d{8}$|^176\d{8}$"
+        REGEX_MOBILE = "^1[3589]\d{9}$|^147\d{8}$|^176\d{8}$"
         # 验证手机号码是否合法
         if not re.match(REGEX_MOBILE, mobile):
             raise serializers.ValidationError("手机号码非法")

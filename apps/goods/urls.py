@@ -9,7 +9,7 @@ goods_detail=views.GoodsCategoryViewset.as_view({ 'get': 'retrieve',})
 
 indexgoods=views.IndexCategoryGoodsViewSet.as_view({ 'get':'list',})
 
-router=DefaultRouter()
+# router=DefaultRouter()
 router.register('goods',views.GoodsView)
 router.register('slide',views.SlideViewset)
 

@@ -4,6 +4,7 @@ from apps.users import views
 from django.views.static import serve
 from myshop import settings
 from rest_framework.routers import DefaultRouter
+
 router = DefaultRouter()
 
 user_list=views.MyUserViewSet.as_view({
@@ -17,14 +18,20 @@ user_detail=views.MyUserViewSet.as_view({
     'patch': 'partial_update',
     'delete':'destroy',
 })
-router=DefaultRouter()
-router.register('users',views.MyUserViewSet)
-urlpatterns = [
-    path('users/',user_list),
-    #path('app8/goods5/',user_list), # 获取或创建
-    path('users/<pk>/',user_detail), # 查找、更新、删除
 
-    path('test/',views.myuser_reg),
+
+router.register('users',views.MyUserViewSet)
+
+urlpatterns = [
+    path('user_reg/', views.user_reg, name='user_reg'),
+    path('user_login/', views.user_login, name='user_login'),
+    path('user_logout/', views.user_logout, name='user_logout'),
+    path('ajax_login_data/', views.ajax_login_data, name='ajax_login_data'),
+    
+    # path('users/',user_list),
+    # path('users/<pk>/',user_detail), # 查找、更新、删除
+
+    path('test/',views.test),
     path("", include(router.urls))
 ]
 #router.register('users', views.MyUserViewSet, basename="users")

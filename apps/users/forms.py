@@ -36,14 +36,14 @@ class UserRegForm(forms.Form):
                                    'required': '密码不能为空',
                                    'min_length': '密码最少6位'
                                })
-    nickname = forms.CharField(label="昵称", max_length=20,required=False,
-                               widget=forms.widgets.TextInput(
-                                   #其中class样式为form-control，这是bootstrap的样式
-                                   attrs={'class': 'form-control', 'placeholder': "请输入用户昵称"}),
-                               error_messages={
-                                   'required': '用户昵称不能为空',
-                                   'max_length': '昵称长度不能超过20位',
-                               })
+    # nickname = forms.CharField(label="昵称", max_length=20,required=False,
+    #                            widget=forms.widgets.TextInput(
+    #                                #其中class样式为form-control，这是bootstrap的样式
+    #                                attrs={'class': 'form-control', 'placeholder': "请输入用户昵称"}),
+    #                            error_messages={
+    #                                'required': '用户昵称不能为空',
+    #                                'max_length': '昵称长度不能超过20位',
+    #                            })
     email = forms.EmailField(label="邮箱",
                                widget=forms.widgets.EmailInput(
                                    attrs={'class': 'form-control',}),

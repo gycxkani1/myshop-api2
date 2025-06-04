@@ -21,10 +21,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     'apps.basic',
     'apps.goods',
     'apps.order',
     'apps.users',
+
     'ckeditor',
     'ckeditor_uploader',
 
@@ -36,24 +38,25 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
-    'django_prometheus.middleware.PrometheusBeforeMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    #'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    #'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    #'app6.middle.mymiddle.AuthMiddleware1',
-    #'app6.middle.mymiddle.AuthMiddleware2'
-    'django_prometheus.middleware.PrometheusAfterMiddleware',
+    'corsheaders.middleware.CorsMiddleware', # 用于处理跨域请求的中间件
+    # 'django_prometheus.middleware.PrometheusBeforeMiddleware', # 用于监控Django应用程序的性能
+    'django.middleware.security.SecurityMiddleware', # 安全中间件
+    'django.contrib.sessions.middleware.SessionMiddleware', # 会话中间件
+    'django.middleware.locale.LocaleMiddleware',  # 本地化中间件
+    'django.middleware.common.CommonMiddleware', # 通用中间件
+    'django.middleware.csrf.CsrfViewMiddleware', # 跨域请求伪造保护中间件
+    'django.contrib.auth.middleware.AuthenticationMiddleware', # 用户认证中间件
+    'django.contrib.messages.middleware.MessageMiddleware',  # 消息中间件
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',  # 点击劫持
+    # 'common.middle.permmiddleware.PermissionMiddleWare', # 用中间件简化权限认证
+    # 'django_prometheus.middleware.PrometheusAfterMiddleware', # 用于监控Django应用程序的性能
 ]
 
-CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ORIGIN_WHITELIST = ()
+CORS_ALLOW_CREDENTIALS = True # 允许携带cookie跨域请求
+CORS_ORIGIN_ALLOW_ALL = True # 允许所有来源的跨域请求
+CORS_ORIGIN_WHITELIST = () # 跨域请求来源白名单
+
+# 允许的跨域请求方法
 CORS_ALLOW_METHODS  = [
      ' DELETE ',
      ' GET ',
@@ -62,6 +65,7 @@ CORS_ALLOW_METHODS  = [
      ' POST ',
      ' PUT ',
 ]
+# 允许的跨域请求头部
 CORS_ALLOW_HEADERS = [
     'accept',
     'accept-encoding',
@@ -91,7 +95,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'django.template.context_processors.media',
+                'django.template.context_processors.media', # 添加媒体文件路径到上下文中
             ],
         },
     },
@@ -159,13 +163,6 @@ USE_L10N = True
 # USE_TZ = True
 USE_TZ = False
 
-# STATIC_URL = '/static/'
-# STATICFILES_DIRS=[os.path.join(BASE_DIR,'static')]
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
-# MEDIA_URL="/media/"
-# MEDIA_ROOT=os.path.join(BASE_DIR,"media")
-
 STATICFILES_DIRS=[os.path.join(BASE_DIR,'static')]
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, '/static')
@@ -212,20 +209,22 @@ REST_FRAMEWORK = {
     # 全局认证类
     'DEFAULT_AUTHENTICATION_CLASSES': (
         # 全局配置使用自定义的token认证
-        #'rest_framework_jwt.authentication.JSONWebTokenAuthentication', # 配置验证方式为JWT验证
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',  
-        #'rest_framework.authentication.TokenAuthentication', # 使用Token令牌的HTTP身份认证
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication', # 配置验证方式为JWT验证
+        # 'rest_framework.authentication.BasicAuthentication',
+        # 'rest_framework.authentication.SessionAuthentication',  
+        # 'rest_framework.authentication.TokenAuthentication', # 使用Token令牌的HTTP身份认证
     ),
 
     # 全局权限配置
     'DEFAULT_PERMISSION_CLASSES': (
-        #'rest_framework.permissions.IsAuthenticated',  # 需要登录认证才能访问
+        # 'rest_framework.permissions.IsAuthenticated',  # 需要登录认证才能访问
     ),
 
+    # 全局渲染配置
     #'DEFAULT_RENDERER_CLASSES':(
-    #    'app8.customrender.CustomRender',
+    #    'common.customrender.CustomRender',
     #)
+
     #不然会提示 'AutoSchema' object has no attribute 'get_link'
     'DEFAULT_SCHEMA_CLASS':'rest_framework.schemas.coreapi.AutoSchema',
 
@@ -241,7 +240,7 @@ REST_FRAMEWORK_EXTENSIONS = {
     'DEFAULT_USE_CACHE': 'default',
 }
 
-
+# JWT配置
 JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=3),  # Token 过期时间为3天
     'JWT_AUTH_HEADER_PREFIX': 'JWT',  # Token的头为：JWT XXXXXXXXXXXXXXXXXXXXXX
@@ -250,10 +249,12 @@ JWT_AUTH = {
     'JWT_RESPONSE_PAYLOAD_HANDLER':'common.jwt_utils.jwt_response_payload_handler'
 }
 
+# 自定义用户验证
 AUTHENTICATION_BACKENDS = (
     'apps.users.views.CustomBackend',
 )
 
+#缓存配置
 CACHES={
     'default':{
         'BACKEND':'django.core.cache.backends.db.DatabaseCache',
