@@ -25,7 +25,6 @@ from django.db.models import Q
 from common.custommodelviewset import CustomModelViewSet
 from common.permissions import IsOwnerOrReadOnly
 
-
 class MyUserViewSet(CacheResponseMixin,CustomModelViewSet):
     queryset = MyUser.objects.all()
     serializer_class = MyUserRegSerializer
@@ -50,8 +49,8 @@ class MyUserViewSet(CacheResponseMixin,CustomModelViewSet):
             print("retrieve")
             return [permissions.IsAuthenticated()]
         elif self.action=="update":
-            return [permissions.IsAuthenticated()]
             print("update")
+            return [permissions.IsAuthenticated()]
         else:
         #return []
             return []
@@ -67,16 +66,17 @@ class MyUserDetailViewSet(mixins.UpdateModelMixin,mixins.RetrieveModelMixin,mixi
 
     #authentication_classes = (permissions.IsAuthenticated,authentication.TokenAuthentication)
 
-myuser=get_user_model()
 
+myuser=get_user_model()
 class CustomBackend(ModelBackend):
     """
     自定义用户验证
     """
     def authenticate(self, request, username=None, password=None, **kwargs):
         try:
+            # 根据用户名或手机号查询用户
             myuser = MyUser.objects.get(Q(username=username)|Q(mobile=username))
-            if myuser.check_password(password):
+            if myuser.check_password(password): #验证密码
                 return myuser
         except Exception as e:
             return None

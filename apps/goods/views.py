@@ -17,6 +17,7 @@ from common.custommodelviewset import CustomModelViewSet
 
 
 class GoodsCategoryViewset(CacheResponseMixin,CustomListModelMixin,CustomRetrieveModelMixin, viewsets.GenericViewSet):
+# class GoodsCategoryViewset(CacheResponseMixin, CustomModelViewSet, viewsets.GenericViewSet):
     """
     list:
         商品分类列表数据
@@ -29,6 +30,7 @@ class GoodsCategoryViewset(CacheResponseMixin,CustomListModelMixin,CustomRetriev
         return self.retrieve(request, *args, **kwargs)
 
 class IndexCategoryGoodsViewSet(CustomListModelMixin, viewsets.GenericViewSet):
+# class IndexCategoryGoodsViewSet(CacheResponseMixin, CustomModelViewSet, viewsets.GenericViewSet):
     """
     首页商品分类数据
     """

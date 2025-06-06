@@ -209,9 +209,9 @@ REST_FRAMEWORK = {
     # 全局认证类
     'DEFAULT_AUTHENTICATION_CLASSES': (
         # 全局配置使用自定义的token认证
-        'rest_framework_jwt.authentication.JSONWebTokenAuthentication', # 配置验证方式为JWT验证
-        # 'rest_framework.authentication.BasicAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',  
+        # 'rest_framework_jwt.authentication.JSONWebTokenAuthentication', # 配置验证方式为JWT验证
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',  
         # 'rest_framework.authentication.TokenAuthentication', # 使用Token令牌的HTTP身份认证
     ),
 

@@ -1,6 +1,7 @@
 from rest_framework import mixins, status
 from common.customresponse import CustomResponse
 
+
 class CustomCreateModelMixin(mixins.CreateModelMixin):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

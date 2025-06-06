@@ -6,6 +6,7 @@ from ..goods.serializers import GoodsModelSerializer
 
 
 class CartModelSerializer(serializers.ModelSerializer):
+    # 隐藏字段，默认使用当前用户
     user = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
     )
@@ -44,11 +45,21 @@ class CartDetailModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model=Cart
-        fields=("goods","goods_num")
+        # fields=("goods","goods_num")
+        fields="__all__"
 
 
 class OrderModelSerializer(serializers.ModelSerializer):
+    # 隐藏字段，默认使用当前用户
     user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    class Meta:
+        model=Order
+        fields="__all__"
+
+class OrderUpdateSerializer(serializers.ModelSerializer):
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    order_sn=serializers.CharField(read_only=True)
+    
     class Meta:
         model=Order
         fields="__all__"

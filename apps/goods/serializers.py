@@ -18,7 +18,7 @@ class CategorySerializerSub(serializers.ModelSerializer):
         fields = "__all__"
 
 class GoodsCategoryModelSerializer(serializers.ModelSerializer):
-    sub_cat=CategorySerializerSub(many=True)
+    sub_cat=CategorySerializerSub(many=True) # 一对多关系
     class Meta:
         model=GoodsCategory
         fields="__all__"

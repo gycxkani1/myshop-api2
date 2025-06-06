@@ -1,3 +1,5 @@
+
+from datetime import datetime
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render
@@ -7,6 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from rest_framework.response import Response
+from rest_framework import mixins
 from apps.order.models import *
 from apps.order.serializers import  *
 # Create your views here.
@@ -16,7 +19,7 @@ from common.custommodelviewset import CustomModelViewSet
 from common.customresponse import CustomResponse
 from common.permissions import IsOwnerOrReadOnly
 
-from common.permissions import IsOwnerOrReadOnly
+# from common.permissions import IsOwnerOrReadOnly
 
 
 def index(request):
@@ -35,6 +38,7 @@ class CartViewset(CustomModelViewSet):
     delete：
         删除购物车数据
     '''
+
     permission_classes = (IsAuthenticated, IsOwnerOrReadOnly)
     authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
     serializer_class = CartModelSerializer
@@ -42,9 +46,11 @@ class CartViewset(CustomModelViewSet):
 
     def get_serializer_class(self):
         if self.action=="list":
-            return CartDetailModelSerializer 
+            return CartDetailModelSerializer
+            # return CartModelSerializer 
         else:
             return CartModelSerializer
+            # return CartDetailModelSerializer
 
     def get_queryset(self):
         return Cart.objects.filter(user=self.request.user) #只显示当前登录用户的购物车信息
@@ -96,10 +102,9 @@ class OrderView(APIView):
             #return CustomResponse(order_json.data)
             return CustomResponse(data=order_json.data, code=200, msg="OK", status=status.HTTP_200_OK)
 
-    @transaction.atomic
+    @transaction.atomic #事务
     def post(self,request):
         #订单编号
-
         order_sn=self.build_order_sn()
         print(order_sn)
         #联系人相关信息
@@ -114,11 +119,8 @@ class OrderView(APIView):
         #创建保存点
         save_id=transaction.savepoint()
         print(request.data)
-        #ser_data=OrderModelSerializer(data=request.data,many=True)
-        #orderinfo=''
-        #if ser_data.is_valid():
-        #    orderinfo=ser_data.save()
-        #print("2222222 "+str(request.user))
+
+        #创建订单主表
         orderinfo=Order.objects.create(
             order_sn=order_sn,
             address=address,
@@ -128,18 +130,19 @@ class OrderView(APIView):
             pay_method=pay_method,
             user=self.request.user,
         )
+
         #从购物车找到商品id，然后在商品表判断库存是否够，如果不够，回滚操作并提示
-        carts=Cart.objects.filter(user=request.user)
+        carts=Cart.objects.filter(user=request.user) #获取当前用户的购物车信息
         for cart in carts:
             try:
             #悲观锁处理，啥都不干先加锁
-                goods=Goods.objects.select_for_update().get(id=cart.goods.id)
+                goods=Goods.objects.select_for_update().get(id=cart.goods.id) 
             except Goods.DoesNoExist:
-                transaction.savepoint_rollback((save_id))
+                transaction.savepoint_rollback((save_id)) #回滚到保存点
                 return Response({'code':'1001','msg':'没有找到编号为'+cart.goods.id+'的商品，无法购买，估计你下手慢了，卖空了','data':[]})
-            #如果购物车数量小于商品的库存量，则无法购买
+            #如果购物车数量大于商品的库存量，则无法购买
             if cart.goods_num>goods.stock_num:
-                transaction.savepoint_rollback((save_id))
+                transaction.savepoint_rollback((save_id)) #回滚到保存点
                 return Response(
                     {'code': '1002', 'msg': '编号为' + str(cart.goods.id) + '的商品库存不够，无法购买，请过段时间再试', 'data': []})
 
@@ -161,11 +164,12 @@ class OrderView(APIView):
             order_price+=cart.goods.price*cart.goods_num
 
 
-            #订单主表中有个订单总金额字段，我们实时计算
+        #订单主表中有个订单总金额字段，我们实时计算
         orderinfo.order_total=order_total
         orderinfo.order_price=order_price
 
         orderinfo.save()
+        
         #删除购物车数据
         aa=Cart.objects.filter(user=request.user).delete()
         print(aa)
@@ -175,13 +179,14 @@ class OrderView(APIView):
         return Response(
             {'code': '200', 'msg': '订单生成成功', 'data': []})
 
-    def build_order_sn(self):
+    def build_order_sn(self): #生成订单号
         order_sn = datetime.now().strftime('%Y%m%d%H%M%S') + str(self.request.user.id)
         return order_sn
 
-class OrderViewset(viewsets.ModelViewSet):
+# class OrderViewset(viewsets.ModelViewSet):
+class OrderViewset(CustomModelViewSet):
     '''
-    购物车视图类
+    订单视图类
     list：
         获取订单详情
     create：
@@ -194,13 +199,15 @@ class OrderViewset(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated, IsOwnerOrReadOnly)
     authentication_classes = (JSONWebTokenAuthentication, SessionAuthentication)
     serializer_class = OrderModelSerializer
-    lookup_field = "goods_id"
+    # lookup_field = "goods_id"
 
     def get_serializer_class(self):
         if self.action=="retrieve":
-            return CartDetailModelSerializer
+            # return CartDetailModelSerializer
+            return OrderUpdateSerializer
         else:
-            return CartModelSerializer
+            # return CartModelSerializer
+            return OrderModelSerializer
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
@@ -226,4 +233,10 @@ class OrderViewset(viewsets.ModelViewSet):
         goods = saved_record.goods
         goods.stock_num -= nums
         goods.save()
+
+class OrderDetailViewSet(mixins.UpdateModelMixin,mixins.RetrieveModelMixin,mixins.DestroyModelMixin, viewsets.GenericViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderUpdateSerializer
+
+    #authentication_classes = (permissions.IsAuthenticated,authentication.TokenAuthentication)
 

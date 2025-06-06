@@ -20,8 +20,8 @@ class Cart(models.Model):
         verbose_name_plural='购物车信息'
         managed = True
         db_table = 'd_cart'
-        verbose_name = "购物车"
-        #unique_together = ("user", "goods")  # 联合索引
+        # verbose_name = "购物车"
+        # unique_together = ("user", "goods")  # 联合索引
 
 
 class Order(models.Model):
@@ -40,7 +40,7 @@ class Order(models.Model):
     contact_mobile = models.CharField(max_length=11, default="",verbose_name="联系电话")
     pay_method = models.IntegerField(default=0, verbose_name="支付方式")
     memo = models.CharField(max_length=200,default='', verbose_name="订单备注")
-    order_state = models.CharField(max_length=20,choices=ORDER_STATUS,default='paying',verbose_name="用户")
+    order_state = models.CharField(max_length=20,choices=ORDER_STATUS,default='paying',verbose_name="订单状态")
     user = models.ForeignKey(MyUser, verbose_name="用户", on_delete=models.DO_NOTHING)
     create_date = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
 

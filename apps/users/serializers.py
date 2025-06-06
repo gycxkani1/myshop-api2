@@ -18,7 +18,7 @@ class MyUserUpdateSerializer(serializers.ModelSerializer):
         "blank":"用户名不允许为空",
         "min_length":"用户名长度至少为6位"
     })
-    mobile=serializers.CharField(read_only=True)
+    mobile=serializers.CharField(read_only=False)
     class Meta:
         model=MyUser
         fields=("username","truename","user_img","sex","email","mobile","level","status")
