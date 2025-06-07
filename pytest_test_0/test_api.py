@@ -1,12 +1,13 @@
 import requests
 import pytest
-host = "http://localhost:8000/"
+host = "http://localhost:8000"
 class IndexTestCase():
-    def test_indexcategorylist(self):
+
+    def testIndexCategoryList(self):
         """
         首页分类列表
         """
-        url = host + "goods/goodscategory/"
+        url = host + "/goods/goodscategory"
         response = requests.get(url)
         assert response.status_code==200, "分类接口状态正常"
         assert len(response.content) > 0, "分类列表不为空"
@@ -14,11 +15,11 @@ class IndexTestCase():
         for cate in cates:
             assert len(cate['name']) > 0, "分类 id=" + str(cate['id'])
 
-    def test_indexgoods(self):
+    def testIndexGoods(self):
         """
         首页商品
         """
-        url = host + "goods/goods/"
+        url = host + "/goods/goods"
         response = requests.get(url)
         assert response.status_code==200, "商品接口状态正常"
         assert len(response.content) > 0, "商品列表不为空"
@@ -27,4 +28,4 @@ class IndexTestCase():
             assert len(cate['name']) > 0, "商品 id=" + str(cate['id'])
 
 if __name__ == '__main__':
-    pytest.main(["-s","-v","--html=pytest_test/report/report_api.html","pytest_test/test_api.py"])
+    pytest.main(["-s","-v","pytest_test/test_api.py"])

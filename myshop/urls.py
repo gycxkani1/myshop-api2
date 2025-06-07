@@ -26,7 +26,7 @@ urlpatterns = [
     path('docs/', include_docs_urls(title="我的商城")),
     path('docs2/', schema_view, name='docs'),
     path('', include('django_prometheus.urls')),
-    # path('ckeditor/',include('ckeditor_uploader.urls')),
+    
     # re_path('media/(?P<path>.*)', serve, {"document_root": settings.MEDIA_ROOT}),
     # re_path('static/(?P<path>.*)', serve, {"document_root": settings.STATIC_ROOT}),
 ] + staticfiles_urlpatterns()+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
